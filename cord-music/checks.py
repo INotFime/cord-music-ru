@@ -29,7 +29,7 @@ def in_same_channel():
             raise PlayerNotConnected("Бот не находится в голосовом канале.")
 
         if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
-            raise MustBeSameChannel("Вы должны быть в голосовом канале с ботом.")
+            raise MustBeSameChannel("Вы должны быть в одном голосовом канале с ботом.")
 
         return True
 
