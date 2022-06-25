@@ -27,7 +27,7 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if ctx.author.voice.channel.id != player.channel.id:
-            raise MustBeSameChannel("**You must be in the same voice channel as the player.**")
+            raise MustBeSameChannel("**Вы должны находится в одном голосовом канале с ботом.**")
 
         track_provider = {
             "yt": YouTubeTrack,
@@ -36,7 +36,7 @@ class Music(commands.Cog):
             "spotify": SpotifyTrack,
         }
 
-        msg = await ctx.respond(f"**Searching for** `{query}` :mag_right:")
+        msg = await ctx.respond(f"**Ищу** `{query}` :mag_right:")
 
         provider: Provider = (
             track_provider.get(provider) if provider else track_provider.get(player.track_provider)
@@ -56,11 +56,11 @@ class Music(commands.Cog):
                 continue
 
         if not tracks:
-            return await ctx.send("**No song/track found with given query.**")
+            return await ctx.send("**Ничего не найдено по запросу.**")
 
         track = tracks[0]
 
-        await ctx.send(f"**Added** `{track.title}` **to queue.** ")
+        await ctx.send(f"**Добавлен** `{track.title}` **в очередь.** ")
         await player.queue.put(track)
 
         if not player.is_playing():
@@ -86,23 +86,23 @@ class Music(commands.Cog):
         if ctx.voice_client:
             return
 
-        msg = await ctx.respond(f"**Connecting to **`{ctx.author.voice.channel}`")
+        msg = await ctx.respond(f"**Подключаюсь к **`{ctx.author.voice.channel}`")
 
         try:
             player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
             self.bot.dispatch("dismusic_player_connect", player)
         except (asyncio.TimeoutError, ClientException):
-            await ctx.send("**Failed to connect to voice channel.**")
+            await ctx.send("**Не удалось подключится к голосовому каналу.**")
 
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
-        await msg.edit_original_message(content=f"**Connected to **`{player.channel.name}`")
+        await msg.edit_original_message(content=f"**Подключился к **`{player.channel.name}`")
         
     @slash_command()
     async def music(self, ctx):
-        em = discord.Embed(title="Music Commands", description="`play` , `pause` , `resume`, `skip` , `seek` , `connect` , `volume` , `loop` , `queue` , `nowplaying` , alwaysjoined , `music`", color=discord.Color.blurple())
-        em.set_footer(text="Music Cord")
+        em = discord.Embed(title="Музыкальные команды", description="`play` , `pause` , `resume`, `skip` , `seek` , `connect` , `volume` , `loop` , `queue` , `nowplaying` , alwaysjoined , `music`", color=discord.Color.blurple())
+        em.set_footer(text="Music Cord Rus")
         await ctx.respond(embed = em)
         
     @slash_command(aliases=["vol"])
@@ -112,40 +112,40 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if vol < 0:
-            return await ctx.respond("**Volume can't be less than 0**")
+            return await ctx.respond("**Громкость не может быть ниже 0**")
 
         if vol > 100 and not forced:
-            return await ctx.respond("**Volume can't greater than 100**")
+            return await ctx.respond("**Громкость не может быть выше 100**")
 
         await player.set_volume(vol)
-        await ctx.respond(f"**Volume set to** {vol} :loud_sound:")
+        await ctx.respond(f"**Установлена громкость:** {vol} :loud_sound:")
         
     @slash_command(aliases=["p"], invoke_without_command=True)
     @voice_connected()
     async def play(self, ctx: commands.Context, *, query: str):
-        """Play or add song to queue (Defaults to YouTube)"""
+        """Добавить трек в очередь (По умолчанию Youtube)"""
         await ctx.invoke(self.connect, ctx)
         await self.play_track(ctx, query)
         
     @slash_command(aliases=["con"])
     @voice_connected()
     async def alwaysjoined(self, ctx: commands.Context):
-        """Enable 24/7 to disable it just do /stop"""
+        """Включить режим 24/7. Отключить командой /stop"""
         if ctx.voice_client:
-            await ctx.respond("Already enabled to disable it do /stop")
+            await ctx.respond("Режим 24/7 уже включен. Для отключения напишите /stop")
 
-        alls = await ctx.respond(f"**Enabling 24/7 in **`{ctx.author.voice.channel}`!")
+        alls = await ctx.respond(f"**Включен режим 24/7 в **`{ctx.author.voice.channel}`!")
 
         try:
             player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
             self.bot.dispatch("dismusic_player_connect", player)
         except (asyncio.TimeoutError, ClientException):
-            await ctx.respond("**Failed to enable!**")
+            await ctx.respond("**Не удалось включить режим 24/7!**")
 
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
-        await alls.edit_original_message(content=f"**Enabled 24/7 in **`{player.channel.name}`!")
+        await alls.edit_original_message(content=f"**Включен режим 24/7 в **`{player.channel.name}`!")
 
     @slash_command(aliases=["disconnect", "dc"])
     @voice_channel_player()
