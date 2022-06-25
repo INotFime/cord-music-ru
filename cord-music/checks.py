@@ -6,7 +6,7 @@ from .errors import MustBeSameChannel, NotConnectedToVoice, PlayerNotConnected
 def voice_connected():
     def predicate(ctx: commands.Context):
         if not ctx.author.voice:
-            raise NotConnectedToVoice("You are not connected to any voice channel.")
+            raise NotConnectedToVoice("Вы не находитесь в голосовом канале.")
 
         return True
 
@@ -16,7 +16,7 @@ def voice_connected():
 def player_connected():
     def predicate(ctx: commands.Context):
         if not ctx.voice_client:
-            raise PlayerNotConnected("Player is not connected to any voice channel.")
+            raise PlayerNotConnected("Бот не находится в голосовом канале.")
 
         return True
 
@@ -26,10 +26,10 @@ def player_connected():
 def in_same_channel():
     def predicate(ctx: commands.Context):
         if not ctx.voice_client:
-            raise PlayerNotConnected("Player is not connected to any voice channel.")
+            raise PlayerNotConnected("Бот не находится в голосовом канале.")
 
         if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
-            raise MustBeSameChannel("You must be in the same voice channel as the player.")
+            raise MustBeSameChannel("Вы должны быть в голосовом канале с ботом.")
 
         return True
 
@@ -39,13 +39,13 @@ def in_same_channel():
 def voice_channel_player():
     def predicate(ctx: commands.Context):
         if not ctx.author.voice:
-            raise NotConnectedToVoice("You are not connected to any voice channel.")
+            raise NotConnectedToVoice("Вы не находитесь в голосовом канале.")
 
         if not ctx.voice_client:
-            raise PlayerNotConnected("Player is not connected to any voice channel.")
+            raise PlayerNotConnected("Бот не находится в голосовом канале.")
 
         if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
-            raise MustBeSameChannel("You must be in the same voice channel as the player.")
+            raise MustBeSameChannel("Вы должны находится в одном канале с ботом.")
 
         return True
 
