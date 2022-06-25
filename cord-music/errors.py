@@ -2,36 +2,36 @@ from discord.ext.commands.errors import CheckFailure
 
 
 class NotConnectedToVoice(CheckFailure):
-    """User not connected to any voice channel"""
+    """Пользователь не подключен к голосовому каналу"""
 
     pass
 
 
 class PlayerNotConnected(CheckFailure):
-    """Player not connected"""
+    """Бот не подключен"""
 
     pass
 
 
 class MustBeSameChannel(CheckFailure):
-    """Player and user not in same channel"""
+    """Пользователь и бот не в одном канале"""
 
     pass
 
 
 class NothingIsPlaying(CheckFailure):
-    """Nothing is playing"""
+    """Ничего не играет"""
 
     pass
 
 
 class NotEnoughSong(CheckFailure):
-    """Not enough songs in queue"""
+    """Недостатачно треков в очереди"""
 
     pass
 
 
 class InvalidLoopMode(CheckFailure):
-    """Invalid loop mode"""
+    """Неизвестный режим повтора"""
 
     pass
