@@ -17,7 +17,7 @@ from .errors import MustBeSameChannel
 from .player import DisPlayer
 
 class Music(commands.Cog):
-    """Music commands"""
+    """Команды музыки"""
 
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -82,7 +82,7 @@ class Music(commands.Cog):
     @slash_command(aliases=["con"])
     @voice_connected()
     async def connect(self, ctx: commands.Context):
-        """Connect the player"""
+        """Подключить бота"""
         if ctx.voice_client:
             return
 
@@ -102,13 +102,13 @@ class Music(commands.Cog):
     @slash_command()
     async def music(self, ctx):
         em = discord.Embed(title="Музыкальные команды", description="`play` , `pause` , `resume`, `skip` , `seek` , `connect` , `volume` , `loop` , `queue` , `nowplaying` , alwaysjoined , `music`", color=discord.Color.blurple())
-        em.set_footer(text="Music Cord Rus")
+        em.set_footer(text="Music Cord Translated (Original By NixonXC)")
         await ctx.respond(embed = em)
         
     @slash_command(aliases=["vol"])
     @voice_channel_player()
     async def volume(self, ctx: commands.Context, vol: int, forced=False):
-        """Set volume"""
+        """Установить громкость"""
         player: DisPlayer = ctx.voice_client
 
         if vol < 0:
@@ -123,7 +123,7 @@ class Music(commands.Cog):
     @slash_command(aliases=["p"], invoke_without_command=True)
     @voice_connected()
     async def play(self, ctx: commands.Context, *, query: str):
-        """Добавить трек в очередь (По умолчанию Youtube)"""
+        """Добавить трек в очередь (По умолчанию YouTube)"""
         await ctx.invoke(self.connect, ctx)
         await self.play_track(ctx, query)
         
@@ -150,49 +150,49 @@ class Music(commands.Cog):
     @slash_command(aliases=["disconnect", "dc"])
     @voice_channel_player()
     async def stop(self, ctx: commands.Context):
-        """Stop the player"""
+        """"""
         player: DisPlayer = ctx.voice_client
 
         await player.destroy()
-        await ctx.respond("**Stopped the player** :stop_button: ")
+        await ctx.respond("**Остановленно** :stop_button: ")
         self.bot.dispatch("dismusic_player_stop", player)
 
     @slash_command()
     @voice_channel_player()
     async def pause(self, ctx: commands.Context):
-        """Pause the player"""
+        """Приостановить проигрывание"""
         player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             if player.is_paused():
-                return await ctx.respond("**Player is already paused**.")
+                return await ctx.respond("**Музыка уже приостановленна**.")
 
             await player.set_pause(pause=True)
             self.bot.dispatch("dismusic_player_pause", player)
-            return await ctx.respond("**Paused** :pause_button: ")
+            return await ctx.respond("**Приостановленно** :pause_button: ")
 
-        await ctx.respond("**Player is not playing anything.**")
+        await ctx.respond("**Ничего не играет.**")
 
     @slash_command()
     @voice_channel_player()
     async def resume(self, ctx: commands.Context):
-        """Resume the player"""
+        """Продолжить проигрывание"""
         player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             if not player.is_paused():
-                return await ctx.respond("**Player is already playing.**")
+                return await ctx.respond("**Музыка не приостановленна.**")
 
             await player.set_pause(pause=False)
             self.bot.dispatch("dismusic_player_resume", player)
-            return await ctx.respond("**Resumed** :musical_note: ")
+            return await ctx.respond("**Проигрывается** :musical_note: ")
 
-        await ctx.respond("**Player is not playing anything.**")
+        await ctx.respond("**Ничего не играет.**")
 
     @slash_command()
     @voice_channel_player()
     async def skip(self, ctx: commands.Context):
-        """Skip to next song in the queue."""
+        """Пропустить песню"""
         player: DisPlayer = ctx.voice_client
 
         if player.loop == "CURRENT":
@@ -201,50 +201,50 @@ class Music(commands.Cog):
         await player.stop()
 
         self.bot.dispatch("dismusic_track_skip", player)
-        await ctx.respond("**Skipped** :track_next:")
+        await ctx.respond("**Пропущенно** :track_next:")
 
     @slash_command()
     @voice_channel_player()
     async def seek(self, ctx: commands.Context, seconds: int):
-        """Seek the player backward or forward"""
+        """Перемотать"""
         player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             old_position = player.position
             position = old_position + seconds
             if position > player.source.length:
-                return await ctx.respond("**Can't seek past the end of the track.**")
+                return await ctx.respond("**Нельзя перемотать больше чем осталось.**")
 
             if position < 0:
                 position = 0
 
             await player.seek(position * 1000)
             self.bot.dispatch("dismusic_player_seek", player, old_position, position)
-            return await ctx.respond(f"**Seeked {seconds} seconds** :fast_forward: ")
+            return await ctx.respond(f"**Промотанно {seconds} секунд** :fast_forward: ")
 
-        await ctx.respond("**Player is not playing anything.**")
+        await ctx.respond("**Ничего не играет.**")
 
     @slash_command()
     @voice_channel_player()
     async def loop(self, ctx: commands.Context, loop_type: str = None):
-        """Set loop to `NONE`, `CURRENT` or `PLAYLIST`"""
+        """Установить повтор на `NONE`, `CURRENT`(Одна песня) или `PLAYLIST`(Плейлист)"""
         player: DisPlayer = ctx.voice_client
 
         result = await player.set_loop(loop_type)
-        await ctx.respond(f"Loop has been set to {result} :repeat: ")
+        await ctx.respond(f"Был поставлен тип повтора {result} :repeat: ")
 
     @slash_command(aliases=["q"])
     @voice_channel_player()
     async def queue(self, ctx: commands.Context):
-        """Player queue"""
+        """Вся очередь"""
         player: DisPlayer = ctx.voice_client
 
         if len(player.queue._queue) < 1:
-            return await ctx.respond("**Nothing is in the queue.**")
+            return await ctx.respond("**В очереди ничего нет.**")
 
         embed = Embed(color=Color(0x2F3136))
         embed.set_author(
-            name="Queue",
+            name="Очередь",
             icon_url="https://cdn.discordapp.com/attachments/776345413132877854/940247400046542948/list.png",
         )
 
@@ -279,6 +279,6 @@ class Music(commands.Cog):
     @slash_command(aliases=["np"])
     @voice_channel_player()
     async def nowplaying(self, ctx: commands.Context):
-        """Currently playing song information"""
+        """Информация о том что сейчас играет"""
         player: DisPlayer = ctx.voice_client
         await player.invoke_player(ctx)
